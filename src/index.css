@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* AstroPulse Cosmic Theme */
+    --background: 210 67% 12%;
+    --foreground: 180 100% 95%;
+
+    --card: 210 60% 8%;
+    --card-foreground: 180 100% 95%;
+
+    --popover: 210 60% 10%;
+    --popover-foreground: 180 100% 95%;
+
+    /* Electric Cyan Primary */
+    --primary: 180 100% 50%;
+    --primary-foreground: 210 67% 12%;
+
+    /* Deep Blue Secondary */
+    --secondary: 210 50% 20%;
+    --secondary-foreground: 180 100% 95%;
+
+    --muted: 210 50% 15%;
+    --muted-foreground: 180 30% 70%;
+
+    /* Aurora Green Accent */
+    --accent: 163 100% 50%;
+    --accent-foreground: 210 67% 12%;
+
+    /* Solar Yellow for alerts */
+    --warning: 45 100% 65%;
+    --warning-foreground: 210 67% 12%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 180 100% 95%;
+
+    --border: 210 40% 20%;
+    --input: 210 40% 15%;
+    --ring: 180 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Cosmic glow effects */
+    --glow-cyan: 0 0 20px hsl(180 100% 50% / 0.5);
+    --glow-green: 0 0 20px hsl(163 100% 50% / 0.5);
+    --glow-yellow: 0 0 20px hsl(45 100% 65% / 0.5);
+    
+    /* Gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(210 67% 12%), hsl(210 50% 8%));
+    --gradient-nebula: linear-gradient(180deg, hsl(210 67% 12% / 0.8), hsl(180 100% 50% / 0.1));
+    --gradient-glow: radial-gradient(circle, hsl(180 100% 50% / 0.2), transparent);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Cosmic animations */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(180 100% 50% / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(180 100% 50% / 0.6), 0 0 60px hsl(180 100% 50% / 0.3);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
