@@ -1,8 +1,9 @@
 <h1>AstroVision — AI-Powered Orbital Risk Intelligence</h1>
 <h2>Developed by Astropulse </h2>
-          <p><i>“From Data to Decisions — Beyond Earth.”
-Think Cosmic. Build Futuristic. Innovate Beyond Earth.
-</i> </p>
+          <p><i>“From Data to Decisions — Beyond Earth.”</i> </p>
+            <p><i>"Think Cosmic. Build Futuristic. Innovate Beyond Earth."</i> </p>
+
+
 
 AstroVision is an AI-driven orbital analytics and visualization system that predicts potential satellite collision risks based on orbital parameters such as altitude, inclination, and radiation intensity. It blends machine learning, agentic AI, and data visualization to help researchers, engineers, and space agencies make smarter, data-backed space operation decisions.
 
