@@ -3,23 +3,21 @@ import { useQuery } from '@tanstack/react-query';
 // NASA API Key
 const NASA_API_KEY = "lJMzpCiMTf0Yl6KkASAYdqraC6GYbjmYy6aY6lWz";
 
-// Helper to get date N days ago in YYYY-MM-DD format
+// Helper function to get date N days ago
 function getDateDaysAgo(days) {
     const date = new Date();
     date.setDate(date.getDate() - days);
     return date.toISOString().split('T')[0];
 }
 
-// API Endpoints for Insights
+// API Endpoints
 const INSIGHTS_ENDPOINTS = {
     NOAA_KP_INDEX: 'https://services.swpc.noaa.gov/json/planetary_k_index_1m.json',
     NOAA_SOLAR_FLUX: 'https://services.swpc.noaa.gov/json/f107_cm_flux.json',
     NOAA_XRAY_FLUX: 'https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json',
-
     NASA_SOLAR_FLARES: `https://api.nasa.gov/DONKI/FLR?startDate=${getDateDaysAgo(30)}&endDate=${getDateDaysAgo(0)}&api_key=${NASA_API_KEY}`,
     NASA_CME: `https://api.nasa.gov/DONKI/CME?startDate=${getDateDaysAgo(30)}&endDate=${getDateDaysAgo(0)}&api_key=${NASA_API_KEY}`,
     NASA_GST: `https://api.nasa.gov/DONKI/GST?startDate=${getDateDaysAgo(30)}&endDate=${getDateDaysAgo(0)}&api_key=${NASA_API_KEY}`,
-
     NOAA_ALERTS: 'https://services.swpc.noaa.gov/products/alerts.json',
 };
 
@@ -37,15 +35,14 @@ const fetchData = async (url) => {
     }
 };
 
-// Pattern Detection Hook
+/**
+ * Pattern detection - anomalies over 30 days
+ */
 export const usePatternDetection = () => {
     return useQuery({
         queryKey: ['patternDetection'],
         queryFn: async () => {
-            const [flares, alerts] = await Promise.all([
-                fetchData(INSIGHTS_ENDPOINTS.NASA_SOLAR_FLARES),
-                fetchData(INSIGHTS_ENDPOINTS.NOAA_ALERTS)
-            ]);
+            const flares = await fetchData(INSIGHTS_ENDPOINTS.NASA_SOLAR_FLARES);
 
             const patternData = [];
             for (let i = 29; i >= 0; i--) {
@@ -53,12 +50,12 @@ export const usePatternDetection = () => {
                 targetDate.setDate(targetDate.getDate() - i);
                 const dateStr = targetDate.toISOString().split('T')[0];
 
-                const dayFlares = flares.filter(f =>
+                const dayFlares = flares.filter(f => 
                     f.beginTime && f.beginTime.startsWith(dateStr)
                 ).length;
 
-                const patterns = flares.filter(f =>
-                    f.beginTime && f.beginTime.startsWith(dateStr) &&
+                const patterns = flares.filter(f => 
+                    f.beginTime && f.beginTime.startsWith(dateStr) && 
                     (f.classType && (f.classType.startsWith('M') || f.classType.startsWith('X')))
                 ).length;
 
@@ -71,6 +68,7 @@ export const usePatternDetection = () => {
                     confidence: Math.min(100, confidence)
                 });
             }
+
             return patternData;
         },
         staleTime: 10 * 60 * 1000,
@@ -78,7 +76,9 @@ export const usePatternDetection = () => {
     });
 };
 
-// Event Distribution Hook
+/**
+ * Event distribution
+ */
 export const useEventDistribution = () => {
     return useQuery({
         queryKey: ['eventDistribution'],
@@ -89,7 +89,7 @@ export const useEventDistribution = () => {
                 fetchData(INSIGHTS_ENDPOINTS.NASA_GST)
             ]);
 
-            const distribution = [
+            return [
                 {
                     name: 'Solar Flares',
                     value: flares.length,
@@ -113,15 +113,15 @@ export const useEventDistribution = () => {
                     color: '#10b981'
                 }
             ];
-
-            return distribution;
         },
         staleTime: 10 * 60 * 1000,
         refetchInterval: 10 * 60 * 1000,
     });
 };
 
-// Correlation Analysis Hook
+/**
+ * Solar flux and geomagnetic correlation
+ */
 export const useCorrelationAnalysis = () => {
     return useQuery({
         queryKey: ['correlationAnalysis'],
@@ -132,9 +132,9 @@ export const useCorrelationAnalysis = () => {
             ]);
 
             const recentKp = kpData.slice(-50);
-            const recentFlux = (solarFluxData.observed_indices || []).slice(-50);
+            const recentFlux = solarFluxData.observed_indices?.slice(-50) || [];
 
-            const correlationData = recentKp.map((kp, idx) => {
+            return recentKp.map((kp, idx) => {
                 const flux = recentFlux[idx] || {};
                 return {
                     solarFlux: parseFloat(flux['f10.7_cm']) || 100,
@@ -143,27 +143,27 @@ export const useCorrelationAnalysis = () => {
                     timestamp: kp.time_tag
                 };
             });
-
-            return correlationData;
         },
         staleTime: 10 * 60 * 1000,
         refetchInterval: 10 * 60 * 1000,
     });
 };
 
-// Top Insights Hook
+/**
+ * Top insights from real data
+ */
 export const useTopInsights = () => {
     return useQuery({
         queryKey: ['topInsights'],
         queryFn: async () => {
-            const [flares, alerts, kpData] = await Promise.all([
+            const [flares, kpData] = await Promise.all([
                 fetchData(INSIGHTS_ENDPOINTS.NASA_SOLAR_FLARES),
-                fetchData(INSIGHTS_ENDPOINTS.NOAA_ALERTS),
                 fetchData(INSIGHTS_ENDPOINTS.NOAA_KP_INDEX)
             ]);
 
             const insights = [];
 
+            // Recent high-class flares
             const recentHighFlares = flares.filter(f => 
                 f.classType && (f.classType.startsWith('X') || f.classType.startsWith('M'))
             ).slice(0, 3);
@@ -181,6 +181,7 @@ export const useTopInsights = () => {
                 });
             }
 
+            // Geomagnetic anomaly
             const latestKp = kpData.slice(-1)[0];
             if (latestKp && parseFloat(latestKp.kp) > 4) {
                 insights.push({
@@ -194,6 +195,7 @@ export const useTopInsights = () => {
                 });
             }
 
+            // Pattern correlation
             if (flares.length > 5 && kpData.length > 10) {
                 insights.push({
                     title: 'Solar-Geomagnetic Correlation Found',
@@ -225,66 +227,123 @@ export const useTopInsights = () => {
     });
 };
 
-// Confidence Trends Hook
-export const useConfidenceTrends = () => {
+/**
+ * CME Speed and Frequency Analysis (Last 30 days)
+ */
+export const useCMEAnalysis = () => {
     return useQuery({
-        queryKey: ['confidenceTrends'],
+        queryKey: ['cmeAnalysis'],
         queryFn: async () => {
-            const xrayData = await fetchData(INSIGHTS_ENDPOINTS.NOAA_XRAY_FLUX);
+            const cmeData = await fetchData(INSIGHTS_ENDPOINTS.NASA_CME);
 
-            const hourlyData = xrayData.filter((_, idx) => idx % 60 === 0).slice(-24);
+            // Group by week
+            const weeklyData = [];
+            for (let i = 0; i < 4; i++) {
+                const weekStart = new Date();
+                weekStart.setDate(weekStart.getDate() - (i + 1) * 7);
+                const weekEnd = new Date();
+                weekEnd.setDate(weekEnd.getDate() - i * 7);
 
-            const trends = hourlyData.map((item, idx) => {
-                const flux = parseFloat(item.flux) || 1e-7;
-                const logFlux = Math.log10(flux);
+                const weekCMEs = cmeData.filter(cme => {
+                    const cmeDate = new Date(cme.startTime);
+                    return cmeDate >= weekStart && cmeDate < weekEnd;
+                });
 
-                const flareConfidence = 75 + Math.min(20, Math.max(0, (logFlux + 6) * 5));
-                const stormConfidence = 80 + Math.min(15, Math.max(0, (logFlux + 5.5) * 4));
-                const windConfidence = 85 + Math.min(10, Math.random() * 10);
+                const speeds = weekCMEs
+                    .map(cme => cme.cmeAnalyses && cme.cmeAnalyses[0] && cme.cmeAnalyses[0].speed)
+                    .filter(speed => speed && !isNaN(speed));
 
-                return {
-                    hour: `${idx}:00`,
-                    flares: Math.min(100, flareConfidence),
-                    storms: Math.min(100, stormConfidence),
-                    wind: Math.min(100, windConfidence)
-                };
-            });
+                const avgSpeed = speeds.length > 0 
+                    ? speeds.reduce((sum, speed) => sum + speed, 0) / speeds.length 
+                    : 0;
 
-            return trends;
+                weeklyData.unshift({
+                    week: `Week ${4 - i}`,
+                    count: weekCMEs.length,
+                    avgSpeed: Math.round(avgSpeed),
+                    maxSpeed: speeds.length > 0 ? Math.max(...speeds) : 0
+                });
+            }
+
+            return weeklyData;
         },
         staleTime: 10 * 60 * 1000,
         refetchInterval: 10 * 60 * 1000,
     });
 };
 
-// Main combined hook
+/**
+ * Solar Flare Classification Distribution
+ */
+export const useFlareClassification = () => {
+    return useQuery({
+        queryKey: ['flareClassification'],
+        queryFn: async () => {
+            const flares = await fetchData(INSIGHTS_ENDPOINTS.NASA_SOLAR_FLARES);
+
+            const classification = {
+                X: 0,
+                M: 0,
+                C: 0,
+                B: 0,
+                A: 0
+            };
+
+            flares.forEach(flare => {
+                const classType = flare.classType && flare.classType.charAt(0);
+                if (classification.hasOwnProperty(classType)) {
+                    classification[classType]++;
+                }
+            });
+
+            return Object.entries(classification).map(([name, value]) => ({
+                name: `Class ${name}`,
+                value,
+                color: name === 'X' ? '#ef4444' : 
+                       name === 'M' ? '#f59e0b' : 
+                       name === 'C' ? '#10b981' : 
+                       name === 'B' ? '#3b82f6' : '#6b7280'
+            }));
+        },
+        staleTime: 10 * 60 * 1000,
+        refetchInterval: 10 * 60 * 1000,
+    });
+};
+
+/**
+ * Main combined hook
+ */
 export const useInsightsData = () => {
     const patternDetection = usePatternDetection();
     const eventDistribution = useEventDistribution();
     const correlationAnalysis = useCorrelationAnalysis();
     const topInsights = useTopInsights();
-    const confidenceTrends = useConfidenceTrends();
+    const cmeAnalysis = useCMEAnalysis();
+    const flareClassification = useFlareClassification();
 
     const isLoading = 
         patternDetection.isLoading ||
         eventDistribution.isLoading ||
         correlationAnalysis.isLoading ||
         topInsights.isLoading ||
-        confidenceTrends.isLoading;
+        cmeAnalysis.isLoading ||
+        flareClassification.isLoading;
 
     const isError =
         patternDetection.isError ||
         eventDistribution.isError ||
         correlationAnalysis.isError ||
         topInsights.isError ||
-        confidenceTrends.isError;
+        cmeAnalysis.isError ||
+        flareClassification.isError;
 
     return {
         patternData: patternDetection.data || [],
         eventDistribution: eventDistribution.data || [],
         correlationData: correlationAnalysis.data || [],
         topInsights: topInsights.data || [],
-        confidenceTrends: confidenceTrends.data || [],
+        cmeAnalysis: cmeAnalysis.data || [],
+        flareClassification: flareClassification.data || [],
         isLoading,
         isError,
         error: patternDetection.error || eventDistribution.error || correlationAnalysis.error

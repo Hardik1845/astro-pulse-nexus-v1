@@ -285,7 +285,7 @@ const Index = () => {
         </main>
       </div>
 
-      {/* Floating Chat Interface */}
+      Floating Chat Interface
       <ChatInterface />
     </div>
   );

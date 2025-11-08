@@ -17,39 +17,13 @@ const Insights = () => {
     eventDistribution,
     correlationData,
     topInsights,
-    confidenceTrends,
+    cmeAnalysis,
+    flareClassification,
     isLoading,
     isError
   } = useInsightsData();
 
   const [selectedInsight, setSelectedInsight] = useState<number | null>(null);
-  const [hoveredChart, setHoveredChart] = useState<string | null>(null);
-
-  // AI Model Performance (static but realistic)
-  const modelPerformanceData = [
-    { model: 'Neural Net', accuracy: 94.2, speed: 87, lastUpdate: '2h ago' },
-    { model: 'Random Forest', accuracy: 89.5, speed: 92, lastUpdate: '4h ago' },
-    { model: 'SVM', accuracy: 86.3, speed: 78, lastUpdate: '6h ago' },
-    { model: 'Deep Learning', accuracy: 96.1, speed: 65, lastUpdate: '1h ago' },
-    { model: 'Ensemble', accuracy: 97.3, speed: 71, lastUpdate: '30min ago' },
-  ];
-
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-card/95 backdrop-blur-md border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-semibold text-foreground mb-2">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-xs" style={{ color: entry.color }}>
-              {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (isLoading) {
     return (
@@ -112,15 +86,15 @@ const Insights = () => {
               AI Intelligence Insights
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Deep learning analysis and pattern recognition from real-time space weather data
+              Deep learning analysis and pattern recognition from space weather data
             </p>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Clock className="w-4 h-4" />
-              <span>Updated every 5 minutes • {new Date().toLocaleString()}</span>
+              <span>Live data from NASA DONKI & NOAA • Updated every 5 minutes</span>
             </div>
           </div>
 
-          {/* Key Insights Cards - Enhanced */}
+          {/* Key Insights Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {topInsights.map((insight, index) => (
               <Card
@@ -173,14 +147,8 @@ const Insights = () => {
             ))}
           </div>
 
-          {/* Pattern Detection Over Time - Enhanced */}
-          <Card 
-            className={`border-border bg-card/80 backdrop-blur-sm transition-all duration-300 ${
-              hoveredChart === 'pattern' ? 'shadow-glow-cyan' : ''
-            }`}
-            onMouseEnter={() => setHoveredChart('pattern')}
-            onMouseLeave={() => setHoveredChart(null)}
-          >
+          {/* Pattern Detection Over Time */}
+          <Card className="border-border bg-card/80 backdrop-blur-sm shadow-glow-cyan">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -188,7 +156,7 @@ const Insights = () => {
                   Pattern Detection Timeline (30 Days)
                 </div>
                 <Badge variant="outline" className="border-primary text-primary">
-                  Real-time Data
+                  NASA DONKI
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -212,7 +180,13 @@ const Insights = () => {
                     label={{ value: 'Days', position: 'insideBottom', offset: -5 }}
                   />
                   <YAxis stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                    }}
+                  />
                   <Legend />
                   <Area 
                     type="monotone" 
@@ -239,70 +213,63 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          {/* Model Performance & Event Distribution */}
+          {/* CME Analysis & Flare Classification */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* AI Model Performance - Enhanced */}
-            <Card 
-              className={`border-border bg-card/80 backdrop-blur-sm transition-all duration-300 ${
-                hoveredChart === 'model' ? 'shadow-glow-cyan' : ''
-              }`}
-              onMouseEnter={() => setHoveredChart('model')}
-              onMouseLeave={() => setHoveredChart(null)}
-            >
+            {/* CME Speed and Frequency */}
+            <Card className="border-border bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-primary" />
-                  AI Model Performance Metrics
+                  CME Speed & Frequency (4 Weeks)
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={modelPerformanceData} layout="vertical">
+                  <BarChart data={cmeAnalysis}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
-                    <YAxis 
-                      dataKey="model" 
-                      type="category" 
+                    <XAxis 
+                      dataKey="week" 
                       stroke="hsl(var(--muted-foreground))" 
-                      width={100} 
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                      }}
+                    />
                     <Legend />
                     <Bar 
-                      dataKey="accuracy" 
-                      fill="hsl(var(--primary))" 
-                      name="Accuracy %" 
-                      radius={[0, 4, 4, 0]}
+                      dataKey="count" 
+                      fill="hsl(var(--accent))" 
+                      name="CME Count"
+                      radius={[4, 4, 0, 0]}
                     />
                     <Bar 
-                      dataKey="speed" 
-                      fill="hsl(var(--accent))" 
-                      name="Speed Score" 
-                      radius={[0, 4, 4, 0]}
+                      dataKey="avgSpeed" 
+                      fill="hsl(var(--primary))" 
+                      name="Avg Speed (km/s)"
+                      radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="mt-4 pt-4 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center">
-                    Best performer: Ensemble (97.3% accuracy) • Updated: 30min ago
+                    Total CMEs: {cmeAnalysis.reduce((sum, w) => sum + w.count, 0)} • 
+                    Max Speed: {Math.max(...cmeAnalysis.map(w => w.maxSpeed))} km/s
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Event Distribution - Enhanced */}
-            <Card 
-              className={`border-border bg-card/80 backdrop-blur-sm transition-all duration-300 ${
-                hoveredChart === 'events' ? 'shadow-glow-cyan' : ''
-              }`}
-              onMouseEnter={() => setHoveredChart('events')}
-              onMouseLeave={() => setHoveredChart(null)}
-            >
+            {/* Solar Flare Classification */}
+            <Card className="border-border bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <PieChart className="w-5 h-5 text-primary" />
-                    Event Type Distribution
+                    Solar Flare Classification
                   </div>
                   <Badge variant="outline" className="border-accent text-accent">
                     Last 30 Days
@@ -313,7 +280,7 @@ const Insights = () => {
                 <ResponsiveContainer width="100%" height={300}>
                   <RePieChart>
                     <Pie
-                      data={eventDistribution}
+                      data={flareClassification}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
@@ -322,7 +289,7 @@ const Insights = () => {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {eventDistribution.map((entry, index) => (
+                      {flareClassification.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -331,30 +298,66 @@ const Insights = () => {
                 </ResponsiveContainer>
                 <div className="mt-4 pt-4 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center">
-                    Total Events: {eventDistribution.reduce((sum, e) => sum + e.value, 0)} • 
-                    Source: NASA DONKI & NOAA SWPC
+                    Total Flares: {flareClassification.reduce((sum, f) => sum + f.value, 0)} • 
+                    X-class most severe
                   </p>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Correlation Analysis - Enhanced */}
-          <Card 
-            className={`border-border bg-card/80 backdrop-blur-sm transition-all duration-300 ${
-              hoveredChart === 'correlation' ? 'shadow-glow-cyan' : ''
-            }`}
-            onMouseEnter={() => setHoveredChart('correlation')}
-            onMouseLeave={() => setHoveredChart(null)}
-          >
+          {/* Event Distribution */}
+          <Card className="border-border bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity className="w-5 h-5 text-primary" />
+                  Space Weather Event Distribution
+                </div>
+                <Badge variant="outline" className="border-warning text-warning">
+                  Live Data
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <RePieChart>
+                  <Pie
+                    data={eventDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {eventDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </RePieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground text-center">
+                  Total Events: {eventDistribution.reduce((sum, e) => sum + e.value, 0)} • 
+                  Sources: NASA DONKI (Flares, CME, GST) & NOAA SWPC
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Correlation Analysis */}
+          <Card className="border-border bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
                   Solar Flux vs Geomagnetic Activity Correlation
                 </div>
                 <Badge variant="outline" className="border-primary text-primary">
-                  Live Analysis
+                  NOAA Data
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -377,7 +380,14 @@ const Insights = () => {
                     label={{ value: 'Kp Index (×10)', angle: -90, position: 'insideLeft' }}
                   />
                   <ZAxis type="number" dataKey="size" range={[50, 400]} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomTooltip />} />
+                  <Tooltip 
+                    cursor={{ strokeDasharray: '3 3' }}
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                    }}
+                  />
                   <Scatter 
                     name="Events" 
                     data={correlationData} 
@@ -387,78 +397,8 @@ const Insights = () => {
               </ResponsiveContainer>
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-xs text-muted-foreground text-center">
-                  Bubble size indicates correlation strength • Data points: {correlationData.length}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* AI Confidence Trends - Enhanced */}
-          <Card 
-            className={`border-border bg-card/80 backdrop-blur-sm transition-all duration-300 ${
-              hoveredChart === 'confidence' ? 'shadow-glow-cyan' : ''
-            }`}
-            onMouseEnter={() => setHoveredChart('confidence')}
-            onMouseLeave={() => setHoveredChart(null)}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  24-Hour AI Confidence Trends
-                </div>
-                <Badge variant="outline" className="border-accent text-accent">
-                  Predictive Model
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={confidenceTrends}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="hour" 
-                    stroke="hsl(var(--muted-foreground))"
-                    label={{ value: 'Time (Hours)', position: 'insideBottom', offset: -5 }}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))" 
-                    domain={[60, 100]}
-                    label={{ value: 'Confidence %', angle: -90, position: 'insideLeft' }}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="flares" 
-                    stroke="hsl(var(--warning))" 
-                    strokeWidth={2} 
-                    name="Flare Prediction"
-                    dot={{ fill: 'hsl(var(--warning))' }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="storms" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={2} 
-                    name="Storm Prediction"
-                    dot={{ fill: 'hsl(var(--primary))' }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="wind" 
-                    stroke="hsl(var(--accent))" 
-                    strokeWidth={2} 
-                    name="Solar Wind Prediction"
-                    dot={{ fill: 'hsl(var(--accent))' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-              <div className="mt-4 pt-4 border-t border-border">
-                <p className="text-xs text-muted-foreground text-center">
-                  Confidence based on X-ray flux analysis • Avg confidence: {
-                    (confidenceTrends.reduce((sum, t) => sum + (t.flares + t.storms + t.wind) / 3, 0) / confidenceTrends.length).toFixed(1)
-                  }%
+                  Bubble size indicates correlation strength • Data points: {correlationData.length} • 
+                  Sources: NOAA F10.7 Flux & Kp Index
                 </p>
               </div>
             </CardContent>
