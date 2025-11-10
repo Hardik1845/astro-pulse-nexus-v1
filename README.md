@@ -1,73 +1,67 @@
-# Welcome to your Lovable project
+<h1>AstroVision — AI-Powered Orbital Risk Intelligence</h1>
+<h2>Developed by Astropulse </h2>
+          <p><i>“From Data to Decisions — Beyond Earth.”</i> </p>
+            <p><i>"Think Cosmic. Build Futuristic. Innovate Beyond Earth."</i> </p>
 
-## Project info
 
-**URL**: https://lovable.dev/projects/f847ff71-16bb-48ce-8936-e4149e0d220b
 
-## How can I edit this code?
+AstroVision is an AI-driven orbital analytics and visualization system that predicts potential satellite collision risks based on orbital parameters such as altitude, inclination, and radiation intensity. It blends machine learning, agentic AI, and data visualization to help researchers, engineers, and space agencies make smarter, data-backed space operation decisions.
 
-There are several ways of editing your application.
+🚀 Problem Statement
 
-**Use Lovable**
+With over 10,000 active satellites and millions of space debris fragments orbiting Earth, predicting and preventing collisions has become critical.
+Existing systems are often inaccessible or lack real-time visualization capabilities.
+AstroVision aims to provide a fast, intuitive, and intelligent platform that visualizes orbital stability and predicts risk using AI-powered insights.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f847ff71-16bb-48ce-8936-e4149e0d220b) and start prompting.
+💡 Core Features
 
-Changes made via Lovable will be committed automatically to this repo.
+🔭 AI-Based Risk Prediction — Predicts collision/stability risks using trained ML models.
 
-**Use your preferred IDE**
+🌐 Interactive Visualization Dashboard — Displays orbital data, risk zones, and anomaly patterns dynamically.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+🤖 Agentic AI Integration — Intelligent agents autonomously manage data preprocessing, anomaly detection, and insight generation.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+📈 Adaptive Insights — Real-time, user-driven analytics powered by live parameter adjustments.
 
-Follow these steps:
+⚡ FastAPI Backend + React Frontend — High-performance APIs and modern UI.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Future Scope
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+🌍 Integration with real NASA TLE datasets for live predictions
 
-# Step 3: Install the necessary dependencies.
-npm i
+🛰️ Expansion to Mars & Lunar mission risk modeling
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+💬 Conversational AI Assistant for Astronomical Queries
 
-**Edit a file directly in GitHub**
+☁️ Full Cloud Deployment & API exposure for researchers
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+🧾 Learnings
 
-**Use GitHub Codespaces**
+Building AI-integrated FastAPI backends
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Using React-Recharts for dynamic visualization
 
-## What technologies are used for this project?
+Applying Agentic AI concepts in a modular way
 
-This project is built with:
+Deploying and connecting ML models to full-stack applications
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+📸 Preview (Infographic Concept)
 
-## How can I deploy this project?
+Dashboard: Interactive orbit map with risk heat zones
 
-Simply open [Lovable](https://lovable.dev/projects/f847ff71-16bb-48ce-8936-e4149e0d220b) and click on Share -> Publish.
+Model Insight Panel: “High-risk region detected near 600 km altitude”
 
-## Can I connect a custom domain to my Lovable project?
+Agent Logs: Sub-agents autonomously flag anomalies and tune predictions
 
-Yes, you can!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Credits
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Akshat Mehta 
+
+Arya Kashyap
+
+Ansh Arora
+
+Hardik Aggarwal
+
+
